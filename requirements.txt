@@ -63,7 +63,7 @@ pynndescent==0.5.10
 pyparsing==3.0.9
 python-dateutil==2.8.2
 pytz==2023.3
-pywin32==305.1
+pywin32==306.0
 pyzmq==25.1.0
 regex==2023.6.3
 requests==2.31.0
