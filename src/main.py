@@ -10,13 +10,13 @@ from models.Predict import Predict
 import json
 
 
-data_importer = DataImporter('data/data')
+data_importer = DataImporter('data/raw')
 df = data_importer.load_data()
 X_train, X_val, _, y_train, y_val, _ = data_importer.split_train_test(df)
 
 # Preprocess text and images
 text_preprocessor = TextPreprocessor()
-image_preprocessor = ImagePreprocessor('data/data')
+image_preprocessor = ImagePreprocessor('data/raw')
 text_preprocessor.preprocess_text_in_df(X_train, columns=['description'])
 text_preprocessor.preprocess_text_in_df(X_val, columns=['description'])
 image_preprocessor.preprocess_images_in_df(X_train)
@@ -65,5 +65,5 @@ vgg16 = keras.models.load_model('best_vgg16_model.h5')
 with open('best_weights.json', 'r') as json_file:
     best_weights = json.load(json_file)
 
-predictor = Predict(tokenizer, lstm, vgg16, best_weights, filepath='data/data')
+predictor = Predict(tokenizer, lstm, vgg16, best_weights, filepath='data/raw')
 final_predictions = predictor.predict(X_val, y_val)
