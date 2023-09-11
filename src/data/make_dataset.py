@@ -3,15 +3,18 @@ import click
 import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
+import shutil
 
 
 @click.command()
 @click.argument('input_filepath', type=click.Path(exists=True))
 @click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
-    """ Runs data processing scripts to turn raw data from (../raw) into
-        cleaned data ready to be analyzed (saved in ../processed).
-    """
+def main(input_filepath="../../data/raw", output_filepath="../../data/processed"):
+
+    # Utilisez shutil.copytree pour copier récursivement le contenu du dossier source vers le dossier de destination
+    # Si le dossier de destination existe déjà, il sera remplacé.
+    shutil.copytree(input_filepath, output_filepath)
+
     logger = logging.getLogger(__name__)
     logger.info('making final data set from raw data')
 
@@ -28,3 +31,4 @@ if __name__ == '__main__':
     load_dotenv(find_dotenv())
 
     main()
+
