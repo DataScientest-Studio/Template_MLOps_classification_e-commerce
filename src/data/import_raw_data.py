@@ -26,25 +26,30 @@ def import_raw_data(raw_data_relative_path,
                 print(f'Error accessing the object {input_file}:', response.status_code)
 
     # Téléchargez le dossier 'img_train'
-    img_train_folder_url = os.path.join(bucket_folder_url, 'img_train')
-    img_train_local_path = os.path.join(raw_data_relative_path, 'img_train')
-    if not check_existing_folder(img_train_local_path):
-        os.makedirs(img_train_local_path)
+        img_train_folder_url = os.path.join(bucket_folder_url, 'img_train/')
+        img_train_local_path = os.path.join(raw_data_relative_path, 'img_train/')
+        if check_existing_folder(img_train_local_path):
+            os.makedirs(img_train_local_path)
 
-    for root, _, files in os.walk(img_train_local_path):
-        for file in files:
-            input_file = os.path.join(img_train_folder_url, os.path.relpath(os.path.join(root, file), img_train_local_path))
-            output_file = os.path.join(raw_data_relative_path, 'img_train', os.path.relpath(os.path.join(root, file), img_train_local_path))
-            if check_existing_file(output_file):
-                object_url = input_file
-                print(f'downloading {input_file} as {os.path.basename(output_file)}')
-                response = requests.get(object_url)
-                if response.status_code == 200:
-                    content = response.content
-                    with open(output_file, "wb") as img_file:
-                        img_file.write(content)
-                else:
-                    print(f'Error accessing the object {input_file}:', response.status_code)
+        try:
+            response = requests.get(img_train_folder_url)
+            if response.status_code == 200:
+                file_list = response.text.splitlines()
+                for img_url in file_list:
+                    img_filename = os.path.basename(img_url)
+                    output_file = os.path.join(img_train_local_path, img_filename)
+                    if check_existing_file(output_file):
+                        print(f'downloading {img_url} as {img_filename}')
+                        img_response = requests.get(img_url)
+                        if img_response.status_code == 200:
+                            with open(output_file, "wb") as img_file:
+                                img_file.write(img_response.content)
+                        else:
+                            print(f'Error downloading {img_url}:', img_response.status_code)
+            else:
+                print(f'Error accessing the object list {img_train_folder_url}:', response.status_code)
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
 
 def main(raw_data_relative_path="../../data/raw", 
         filenames=["X_test_update.csv", "X_train_update.csv", "Y_train_CVw08PX.csv"],

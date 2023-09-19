@@ -4,6 +4,19 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.layers import Input, Embedding, LSTM, Dense
 from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard
+from tensorflow.keras.applications.vgg16 import VGG16
+from tensorflow.keras.layers import Input, Dense, Flatten
+from tensorflow.keras.models import Model
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import pandas as pd
+from sklearn.utils import resample
+import numpy as np
+from tensorflow.keras.applications.vgg16 import preprocess_input
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from sklearn.metrics import accuracy_score
+from tensorflow import keras
+import pickle
+from features.build_features import DataImporter, TextPreprocessor, ImagePreprocessor
 
 class TextLSTMModel:
     def __init__(self, max_words=10000, max_sequence_length=10):
@@ -16,7 +29,7 @@ class TextLSTMModel:
         self.tokenizer.fit_on_texts(X_train['description'])
 
         tokenizer_config = self.tokenizer.to_json()
-        with open('tokenizer_config.json', 'w', encoding='utf-8') as json_file:
+        with open('../../models/tokenizer_config.json', 'w', encoding='utf-8') as json_file:
           json_file.write(tokenizer_config)
 
         train_sequences = self.tokenizer.texts_to_sequences(X_train['description'])
@@ -34,9 +47,9 @@ class TextLSTMModel:
 
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-        lstm_callbacks = [ModelCheckpoint(filepath='best_lstm_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
+        lstm_callbacks = [ModelCheckpoint(filepath='../../models/best_lstm_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
         EarlyStopping(patience=3, restore_best_weights=True),  # Arrête l'entraînement si la performance ne s'améliore pas
-        TensorBoard(log_dir='./logs')  # Enregistre les journaux pour TensorBoard
+        TensorBoard(log_dir='../../logs')  # Enregistre les journaux pour TensorBoard
         ]
 
         self.model.fit(
@@ -47,14 +60,6 @@ class TextLSTMModel:
             validation_data=([val_padded_sequences], tf.keras.utils.to_categorical(y_val, num_classes=27)),
             callbacks=lstm_callbacks
         )
-
-
-from tensorflow.keras.applications.vgg16 import VGG16
-from tensorflow.keras.layers import Input, Dense, Flatten
-from tensorflow.keras.models import Model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard
-import pandas as pd
 
 class ImageVGG16Model:
     def __init__(self):
@@ -108,9 +113,9 @@ class ImageVGG16Model:
 
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-        vgg_callbacks = [ModelCheckpoint(filepath='best_vgg16_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
+        vgg_callbacks = [ModelCheckpoint(filepath='../../models/best_vgg16_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
         EarlyStopping(patience=3, restore_best_weights=True),  # Arrête l'entraînement si la performance ne s'améliore pas
-        TensorBoard(log_dir='./logs')  # Enregistre les journaux pour TensorBoard
+        TensorBoard(log_dir='../../logs')  # Enregistre les journaux pour TensorBoard
         ]
 
         self.model.fit(
@@ -120,17 +125,6 @@ class ImageVGG16Model:
             callbacks=vgg_callbacks
         )
 
-
-
-import pandas as pd
-from sklearn.utils import resample
-import numpy as np
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-import tensorflow as tf
-from tensorflow.keras.applications.vgg16 import preprocess_input
-from tensorflow.keras.preprocessing.image import img_to_array, load_img
-from sklearn.metrics import accuracy_score
-import numpy as np
 
 class concatenate:
     def __init__(self, tokenizer, lstm, vgg16):
@@ -154,10 +148,10 @@ class concatenate:
         for class_label in range(num_classes):
             # Indices des échantillons appartenant à la classe actuelle
             indices = np.where(y_train == class_label)[0]
-    
+
             # Sous-échantillonnage aléatoire pour sélectionner 'new_samples_per_class' échantillons
             sampled_indices = resample(indices, n_samples=new_samples_per_class, replace=False, random_state=42)
-    
+
             # Ajout des échantillons sous-échantillonnés et de leurs étiquettes aux DataFrames
             new_X_train = pd.concat([new_X_train, X_train.loc[sampled_indices]])
             new_y_train = pd.concat([new_y_train, y_train.loc[sampled_indices]])
@@ -199,32 +193,21 @@ class concatenate:
             combined_predictions = (lstm_weight * lstm_proba) + (vgg16_weight * vgg16_proba)
             final_predictions = np.argmax(combined_predictions, axis=1)
             accuracy = accuracy_score(y_train, final_predictions)
-    
+
             if accuracy > best_accuracy:
                 best_accuracy = accuracy
                 best_weights = (lstm_weight, vgg16_weight)
 
         return best_weights
-    
-from preprocessing.text_preprocessing import TextPreprocessor
-from preprocessing.image_preprocessing import ImagePreprocessor
-from models.text_lstm import TextLSTMModel
-from models.image_vgg16 import ImageVGG16Model
-from data.import_data import DataImporter
-from models.Concatenate import concatenate
-import tensorflow as tf
-from tensorflow import keras
-from models.Predict import Predict
-import json
 
 
-data_importer = DataImporter('data/data')
+data_importer = DataImporter()
 df = data_importer.load_data()
 X_train, X_val, _, y_train, y_val, _ = data_importer.split_train_test(df)
 
 # Preprocess text and images
 text_preprocessor = TextPreprocessor()
-image_preprocessor = ImagePreprocessor('data/data')
+image_preprocessor = ImagePreprocessor()
 text_preprocessor.preprocess_text_in_df(X_train, columns=['description'])
 text_preprocessor.preprocess_text_in_df(X_val, columns=['description'])
 image_preprocessor.preprocess_images_in_df(X_train)
@@ -238,21 +221,24 @@ text_lstm_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
 image_vgg16_model = ImageVGG16Model()
 image_vgg16_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
 
-with open('tokenizer_config.json', 'r', encoding='utf-8') as json_file:
+with open('../../models/tokenizer_config.json', 'r', encoding='utf-8') as json_file:
     tokenizer_config = json_file.read()
 tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(
     tokenizer_config
 )
-lstm = keras.models.load_model('best_lstm_model.h5')
-vgg16 = keras.models.load_model('best_vgg16_model.h5')
+lstm = keras.models.load_model('../../models/best_lstm_model.h5')
+vgg16 = keras.models.load_model('../../models/best_vgg16_model.h5')
 
 model_concatenate = concatenate(tokenizer, lstm, vgg16)
 lstm_proba, vgg16_proba, new_y_train = model_concatenate.predict(X_train, y_train)
 best_weights = model_concatenate.optimize(lstm_proba, vgg16_proba, new_y_train)
 
+with open('../../models/best_weights.pkl', "wb") as fichier:
+    pickle.dump(best_weights, fichier)
+
 num_classes = 27
 
-proba_lstm = keras.layers.Input(shape=(num_classes,)) 
+proba_lstm = keras.layers.Input(shape=(num_classes,))
 proba_vgg16 = keras.layers.Input(shape=(num_classes,))
 
 weighted_proba = keras.layers.Lambda(lambda x: best_weights[0] * x[0] + best_weights[1] * x[1])([proba_lstm, proba_vgg16])
@@ -260,4 +246,4 @@ weighted_proba = keras.layers.Lambda(lambda x: best_weights[0] * x[0] + best_wei
 concatenate_model = keras.models.Model(inputs=[proba_lstm, proba_vgg16], outputs=weighted_proba)
 
 # Enregistrer le modèle au format h5
-concatenate_model.save('concatenate.h5')
+concatenate_model.save('../../models/concatenate.h5')

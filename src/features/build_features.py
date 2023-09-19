@@ -5,20 +5,25 @@ import re
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+import pickle
+
 
 class DataImporter:
-    def __init__(self, filepath):
+    def __init__(self, filepath='../../data/processed'):
         self.filepath = filepath
 
     def load_data(self):
-        data = pd.read_csv(f'{self.filepath}/train/X_train_update.csv')
+        data = pd.read_csv(f'{self.filepath}/X_train_update.csv')
         data['description'] = data['designation'] + str(data['description'])
         data = data.drop(['Unnamed: 0', 'designation'], axis=1)
 
-        target = pd.read_csv(f'{self.filepath}/train/Y_train_CVw08PX.csv')
+        target = pd.read_csv(f'{self.filepath}/Y_train_CVw08PX.csv')
         target = target.drop(['Unnamed: 0'], axis=1)
         modalite_mapping = {modalite: i for i, modalite in enumerate(target['prdtypecode'].unique())}
         target['prdtypecode'] = target['prdtypecode'].replace(modalite_mapping)
+
+        with open('../../models/mapper.pkl', "wb") as fichier:
+            pickle.dump(modalite_mapping, fichier)
 
         df = pd.concat([data, target], axis=1)
 
@@ -70,12 +75,13 @@ class DataImporter:
 
         return X_train, X_val, X_test, y_train, y_val, y_test
     
+
 class ImagePreprocessor:
-    def __init__(self, filepath):
+    def __init__(self, filepath='../../data/processed'):
         self.filepath = filepath
 
     def preprocess_images_in_df(self, df):
-        df['image_path'] =  f"{self.filepath}/train/image_train/image_" + df['imageid'].astype(str) + "_product_" + df['productid'].astype(str) + '.jpg'
+        df['image_path'] =  f'{self.filepath}/image_train/image_' + df['imageid'].astype(str) + '_product_' + df['productid'].astype(str) + '.jpg'
 
 
 class TextPreprocessor:
