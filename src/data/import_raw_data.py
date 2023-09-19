@@ -26,8 +26,8 @@ def import_raw_data(raw_data_relative_path,
                 print(f'Error accessing the object {input_file}:', response.status_code)
 
     # Téléchargez le dossier 'img_train'
-        img_train_folder_url = os.path.join(bucket_folder_url, 'img_train/')
-        img_train_local_path = os.path.join(raw_data_relative_path, 'img_train/')
+        img_train_folder_url = os.path.join(bucket_folder_url, 'image_train/')
+        img_train_local_path = os.path.join(raw_data_relative_path, 'image_train/')
         if check_existing_folder(img_train_local_path):
             os.makedirs(img_train_local_path)
 
