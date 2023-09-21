@@ -16,7 +16,8 @@ from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from sklearn.metrics import accuracy_score
 from tensorflow import keras
 import pickle
-from features.build_features import DataImporter, TextPreprocessor, ImagePreprocessor
+import json
+
 
 class TextLSTMModel:
     def __init__(self, max_words=10000, max_sequence_length=10):
@@ -29,7 +30,7 @@ class TextLSTMModel:
         self.tokenizer.fit_on_texts(X_train['description'])
 
         tokenizer_config = self.tokenizer.to_json()
-        with open('../../models/tokenizer_config.json', 'w', encoding='utf-8') as json_file:
+        with open('../models/tokenizer_config.json', 'w', encoding='utf-8') as json_file:
           json_file.write(tokenizer_config)
 
         train_sequences = self.tokenizer.texts_to_sequences(X_train['description'])
@@ -47,9 +48,9 @@ class TextLSTMModel:
 
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-        lstm_callbacks = [ModelCheckpoint(filepath='../../models/best_lstm_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
+        lstm_callbacks = [ModelCheckpoint(filepath='../models/best_lstm_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
         EarlyStopping(patience=3, restore_best_weights=True),  # Arrête l'entraînement si la performance ne s'améliore pas
-        TensorBoard(log_dir='../../logs')  # Enregistre les journaux pour TensorBoard
+        TensorBoard(log_dir='../logs')  # Enregistre les journaux pour TensorBoard
         ]
 
         self.model.fit(
@@ -113,9 +114,9 @@ class ImageVGG16Model:
 
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-        vgg_callbacks = [ModelCheckpoint(filepath='../../models/best_vgg16_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
+        vgg_callbacks = [ModelCheckpoint(filepath='../models/best_vgg16_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
         EarlyStopping(patience=3, restore_best_weights=True),  # Arrête l'entraînement si la performance ne s'améliore pas
-        TensorBoard(log_dir='../../logs')  # Enregistre les journaux pour TensorBoard
+        TensorBoard(log_dir='../logs')  # Enregistre les journaux pour TensorBoard
         ]
 
         self.model.fit(
@@ -201,49 +202,3 @@ class concatenate:
         return best_weights
 
 
-data_importer = DataImporter()
-df = data_importer.load_data()
-X_train, X_val, _, y_train, y_val, _ = data_importer.split_train_test(df)
-
-# Preprocess text and images
-text_preprocessor = TextPreprocessor()
-image_preprocessor = ImagePreprocessor()
-text_preprocessor.preprocess_text_in_df(X_train, columns=['description'])
-text_preprocessor.preprocess_text_in_df(X_val, columns=['description'])
-image_preprocessor.preprocess_images_in_df(X_train)
-image_preprocessor.preprocess_images_in_df(X_val)
-
-# Train LSTM model
-text_lstm_model = TextLSTMModel()
-text_lstm_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
-
-# Train VGG16 model
-image_vgg16_model = ImageVGG16Model()
-image_vgg16_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
-
-with open('../../models/tokenizer_config.json', 'r', encoding='utf-8') as json_file:
-    tokenizer_config = json_file.read()
-tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(
-    tokenizer_config
-)
-lstm = keras.models.load_model('../../models/best_lstm_model.h5')
-vgg16 = keras.models.load_model('../../models/best_vgg16_model.h5')
-
-model_concatenate = concatenate(tokenizer, lstm, vgg16)
-lstm_proba, vgg16_proba, new_y_train = model_concatenate.predict(X_train, y_train)
-best_weights = model_concatenate.optimize(lstm_proba, vgg16_proba, new_y_train)
-
-with open('../../models/best_weights.pkl', "wb") as fichier:
-    pickle.dump(best_weights, fichier)
-
-num_classes = 27
-
-proba_lstm = keras.layers.Input(shape=(num_classes,))
-proba_vgg16 = keras.layers.Input(shape=(num_classes,))
-
-weighted_proba = keras.layers.Lambda(lambda x: best_weights[0] * x[0] + best_weights[1] * x[1])([proba_lstm, proba_vgg16])
-
-concatenate_model = keras.models.Model(inputs=[proba_lstm, proba_vgg16], outputs=weighted_proba)
-
-# Enregistrer le modèle au format h5
-concatenate_model.save('../../models/concatenate.h5')
