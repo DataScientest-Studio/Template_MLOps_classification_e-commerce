@@ -47,7 +47,8 @@ Project Organization
 
 Once you have downloaded the github repo :
 Open the anaconda powershell on the root of the project
-conda create -n "Rakuten-project"    <- It will create your conda environnement
+conda create -n "Rakuten-project"    <- It will create your conda environement
+conda activate Rakuten-project       <- It will activate your environment
 conda install pip                    <- May be optional
 pip install -r requirements.txt      <- It will install the required packages
 python src/data/import_raw_data.py   <- It will import the data on data/raw/
