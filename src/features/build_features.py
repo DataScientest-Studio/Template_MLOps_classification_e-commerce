@@ -9,7 +9,7 @@ import pickle
 
 
 class DataImporter:
-    def __init__(self, filepath='/data/processed'):
+    def __init__(self, filepath='data/preprocessed'):
         self.filepath = filepath
 
     def load_data(self):
