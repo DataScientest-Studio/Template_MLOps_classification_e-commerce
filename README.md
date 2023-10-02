@@ -45,16 +45,24 @@ Project Organization
 
 --------
 
-Once you have downloaded the github repo :
-Open the anaconda powershell on the root of the project
-conda create -n "Rakuten-project"    <- It will create your conda environement
-conda activate Rakuten-project       <- It will activate your environment
-conda install pip                    <- May be optional
-pip install -r requirements.txt      <- It will install the required packages
-python src/data/import_raw_data.py   <- It will import the data on data/raw/
-python src/data/make_dataset.py      <- It will copy the raw dataset and paste it on data/processed/
-python src/main.py                   <- It will train the models on the dataset and save them in models/
-python src/predict.py                <- It will use the trained models to make a prediction (of the prdtypecode) on the files that are in data/external/
+Once you have downloaded the github repo, open the anaconda powershell on the root of the project and follow those instructions :
+
+> `conda create -n "Rakuten-project"`    <- It will create your conda environement
+
+> `conda activate Rakuten-project`       <- It will activate your environment
+
+> `conda install pip`                    <- May be optional
+
+> `pip install -r requirements.txt`      <- It will install the required packages
+
+> `python src/data/import_raw_data.py`   <- It will import 
+the data on data/raw/
+
+> `python src/data/make_dataset.py`      <- It will copy the raw dataset and paste it on data/processed/
+
+> `python src/main.py`                   <- It will train the models on the dataset and save them in models/
+
+> `python src/predict.py`                <- It will use the trained models to make a prediction (of the prdtypecode) on the files that are in data/external/
                                         The predictions are saved in data/external/ as 'predictions.json'
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
