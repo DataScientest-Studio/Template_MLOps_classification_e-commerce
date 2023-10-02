@@ -55,7 +55,7 @@ Once you have downloaded the github repo, open the anaconda powershell on the ro
 
 > `pip install -r requirements.txt`      <- It will install the required packages
 
-> `python src/data/import_raw_data.py`   <- It will import 
+> `python src/data/import_raw_data.py  data/raw data/preprocessed`   <- It will import 
 the data on data/raw/
 
 > `python src/data/make_dataset.py`      <- It will copy the raw dataset and paste it on data/processed/
