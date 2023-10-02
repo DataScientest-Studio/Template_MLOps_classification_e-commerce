@@ -51,7 +51,7 @@ def import_raw_data(raw_data_relative_path,
     except Exception as e:
         nonlocalprint(f"An error occurred: {str(e)}")
 
-def main(raw_data_relative_path="../../data/raw", 
+def main(raw_data_relative_path="./data/raw", 
         filenames=["X_test_update.csv", "X_train_update.csv", "Y_train_CVw08PX.csv"],
         bucket_folder_url="https://mlops-project-db.s3.eu-west-1.amazonaws.com/classification_e-commerce/"
         ):
