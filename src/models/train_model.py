@@ -30,7 +30,7 @@ class TextLSTMModel:
         self.tokenizer.fit_on_texts(X_train['description'])
 
         tokenizer_config = self.tokenizer.to_json()
-        with open('../models/tokenizer_config.json', 'w', encoding='utf-8') as json_file:
+        with open('models/tokenizer_config.json', 'w', encoding='utf-8') as json_file:
           json_file.write(tokenizer_config)
 
         train_sequences = self.tokenizer.texts_to_sequences(X_train['description'])
@@ -48,9 +48,9 @@ class TextLSTMModel:
 
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-        lstm_callbacks = [ModelCheckpoint(filepath='../models/best_lstm_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
+        lstm_callbacks = [ModelCheckpoint(filepath='models/best_lstm_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
         EarlyStopping(patience=3, restore_best_weights=True),  # Arrête l'entraînement si la performance ne s'améliore pas
-        TensorBoard(log_dir='../logs')  # Enregistre les journaux pour TensorBoard
+        TensorBoard(log_dir='logs')  # Enregistre les journaux pour TensorBoard
         ]
 
         self.model.fit(
@@ -114,9 +114,9 @@ class ImageVGG16Model:
 
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-        vgg_callbacks = [ModelCheckpoint(filepath='../models/best_vgg16_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
+        vgg_callbacks = [ModelCheckpoint(filepath='models/best_vgg16_model.h5', save_best_only=True),  # Enregistre le meilleur modèle
         EarlyStopping(patience=3, restore_best_weights=True),  # Arrête l'entraînement si la performance ne s'améliore pas
-        TensorBoard(log_dir='../logs')  # Enregistre les journaux pour TensorBoard
+        TensorBoard(log_dir='logs')  # Enregistre les journaux pour TensorBoard
         ]
 
         self.model.fit(
