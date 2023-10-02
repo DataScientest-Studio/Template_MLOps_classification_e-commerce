@@ -22,7 +22,7 @@ class DataImporter:
         modalite_mapping = {modalite: i for i, modalite in enumerate(target['prdtypecode'].unique())}
         target['prdtypecode'] = target['prdtypecode'].replace(modalite_mapping)
 
-        with open('../models/mapper.pkl', "wb") as fichier:
+        with open('models/mapper.pkl', "wb") as fichier:
             pickle.dump(modalite_mapping, fichier)
 
         df = pd.concat([data, target], axis=1)
@@ -77,7 +77,7 @@ class DataImporter:
     
 
 class ImagePreprocessor:
-    def __init__(self, filepath='../data/processed'):
+    def __init__(self, filepath='data/processed'):
         self.filepath = filepath
 
     def preprocess_images_in_df(self, df):
