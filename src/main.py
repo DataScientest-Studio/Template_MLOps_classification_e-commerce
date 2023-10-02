@@ -24,19 +24,19 @@ text_lstm_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
 image_vgg16_model = ImageVGG16Model()
 image_vgg16_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
 
-with open('../models/tokenizer_config.json', 'r', encoding='utf-8') as json_file:
+with open('models/tokenizer_config.json', 'r', encoding='utf-8') as json_file:
     tokenizer_config = json_file.read()
 tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(
     tokenizer_config
 )
-lstm = keras.models.load_model('../models/best_lstm_model.h5')
-vgg16 = keras.models.load_model('../models/best_vgg16_model.h5')
+lstm = keras.models.load_model('models/best_lstm_model.h5')
+vgg16 = keras.models.load_model('models/best_vgg16_model.h5')
 
 model_concatenate = concatenate(tokenizer, lstm, vgg16)
 lstm_proba, vgg16_proba, new_y_train = model_concatenate.predict(X_train, y_train)
 best_weights = model_concatenate.optimize(lstm_proba, vgg16_proba, new_y_train)
 
-with open('../models/best_weights.pkl', "wb") as fichier:
+with open('models/best_weights.pkl', "wb") as fichier:
     pickle.dump(best_weights, fichier)
 
 num_classes = 27
@@ -49,4 +49,4 @@ weighted_proba = keras.layers.Lambda(lambda x: best_weights[0] * x[0] + best_wei
 concatenate_model = keras.models.Model(inputs=[proba_lstm, proba_vgg16], outputs=weighted_proba)
 
 # Enregistrer le modèle au format h5
-concatenate_model.save('../models/concatenate.h5')
+concatenate_model.save('models/concatenate.h5')
