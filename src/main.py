@@ -19,14 +19,14 @@ image_preprocessor.preprocess_images_in_df(X_val)
 
 # Train LSTM model
 print("Training LSTM Model")
-# text_lstm_model = TextLSTMModel()
-# text_lstm_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
+text_lstm_model = TextLSTMModel()
+text_lstm_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
 print("Finished training LSTM")
 
 print("Training VGG")
 # Train VGG16 model
-# image_vgg16_model = ImageVGG16Model()
-# image_vgg16_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
+image_vgg16_model = ImageVGG16Model()
+image_vgg16_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
 print("Finished training VGG")
 
 with open("models/tokenizer_config.json", "r", encoding="utf-8") as json_file:
@@ -35,12 +35,14 @@ tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(tokenizer_config)
 lstm = keras.models.load_model("models/best_lstm_model.h5")
 vgg16 = keras.models.load_model("models/best_vgg16_model.h5")
 
+print("Training the concatenate model")
 model_concatenate = concatenate(tokenizer, lstm, vgg16)
 lstm_proba, vgg16_proba, new_y_train = model_concatenate.predict(X_train, y_train)
 best_weights = model_concatenate.optimize(lstm_proba, vgg16_proba, new_y_train)
+print("Finished training concatenate model")
 
-with open("models/best_weights.pkl", "wb") as fichier:
-    pickle.dump(best_weights, fichier)
+with open("models/best_weights.pkl", "wb") as file:
+    pickle.dump(best_weights, file)
 
 num_classes = 27
 
