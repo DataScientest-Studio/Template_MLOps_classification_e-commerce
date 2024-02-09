@@ -56,7 +56,10 @@ class Predict:
         )
         final_predictions = np.argmax(concatenate_proba, axis=1)
 
-        return f"Catégorie : {self.mapper.loc[final_predictions].values[0]}"
+        return {
+            i: self.mapper[str(final_predictions[i])]
+            for i in range(len(final_predictions))
+        }
 
 
 with open("models/tokenizer_config.json", "r", encoding="utf-8") as json_file:
@@ -73,6 +76,8 @@ with open("models/mapper.json", "r") as json_file:
 
 # TO MODIFY WITH X_TEST
 X = pd.read_csv("data/preprocessed/X_train_update.csv")
+X = X.head()
+
 predictor = Predict(
     tokenizer=tokenizer,
     lstm=lstm,
@@ -82,4 +87,4 @@ predictor = Predict(
 )
 
 with open("data/preprocessed/predictions.json", "w", encoding="utf-8") as json_file:
-    json_file.write(predictor.predict(X))
+    json.dump(predictor.predict(X), json_file, indent=2)
