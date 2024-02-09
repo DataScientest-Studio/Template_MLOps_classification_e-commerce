@@ -12,7 +12,13 @@ import pandas as pd
 
 class Predict:
     def __init__(
-        self, tokenizer, lstm, vgg16, best_weights, mapper, filepath="../data/external/"
+        self,
+        tokenizer,
+        lstm,
+        vgg16,
+        best_weights,
+        mapper,
+        filepath="data/preprocessed/",
     ):
         self.tokenizer = tokenizer
         self.lstm = lstm
@@ -53,19 +59,19 @@ class Predict:
         return f"Catégorie : {self.mapper.loc[final_predictions].values[0]}"
 
 
-with open("../models/tokenizer_config.json", "r", encoding="utf-8") as json_file:
+with open("models/tokenizer_config.json", "r", encoding="utf-8") as json_file:
     tokenizer_config = json_file.read()
     tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(tokenizer_config)
-lstm = keras.models.load_model("../models/best_lstm_model.h5")
-vgg16 = keras.models.load_model("../models/best_vgg16_model.h5")
+lstm = keras.models.load_model("models/best_lstm_model.h5")
+vgg16 = keras.models.load_model("models/best_vgg16_model.h5")
 
-with open("../models/best_weights.json", "r") as json_file:
+with open("models/best_weights.json", "r") as json_file:
     best_weights = json.load(json_file)
 
-with open("../models/mapper.json", "r") as json_file:
+with open("models/mapper.json", "r") as json_file:
     mapper = json.load(json_file)
 
-X = pd.read_csv("../data/external/test.csv")
+X = pd.read_csv("data/preprocessed/X_test_update.csv")
 predictor = Predict(
     tokenizer=tokenizer,
     lstm=lstm,
@@ -74,5 +80,5 @@ predictor = Predict(
     mapper=mapper,
 )
 
-with open("../data/external/predictions.json", "w", encoding="utf-8") as json_file:
+with open("data/preprocessed/predictions.json", "w", encoding="utf-8") as json_file:
     json_file.write(predictor.predict(X))
