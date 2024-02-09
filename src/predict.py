@@ -71,7 +71,8 @@ with open("models/best_weights.json", "r") as json_file:
 with open("models/mapper.json", "r") as json_file:
     mapper = json.load(json_file)
 
-X = pd.read_csv("data/preprocessed/X_test_update.csv")
+# TO MODIFY WITH X_TEST
+X = pd.read_csv("data/preprocessed/X_train_update.csv")
 predictor = Predict(
     tokenizer=tokenizer,
     lstm=lstm,

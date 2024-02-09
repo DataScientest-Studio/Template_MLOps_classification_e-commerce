@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import pickle
+import math
 
 
 class DataImporter:
@@ -103,6 +104,9 @@ class TextPreprocessor:
         )  # Vous pouvez choisir une autre langue si nécessaire
 
     def preprocess_text(self, text):
+
+        if isinstance(text, float) and math.isnan(text):
+            return ""
         # Supprimer les balises HTML
         text = BeautifulSoup(text, "html.parser").get_text()
 
