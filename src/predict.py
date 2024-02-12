@@ -8,6 +8,8 @@ import numpy as np
 import json
 from tensorflow import keras
 import pandas as pd
+import argparse
+
 
 
 class Predict:
@@ -18,24 +20,29 @@ class Predict:
         vgg16,
         best_weights,
         mapper,
-        filepath="data/preprocessed/",
+        filepath,
+        imagepath
     ):
         self.tokenizer = tokenizer
         self.lstm = lstm
         self.vgg16 = vgg16
         self.best_weights = best_weights
-        self.filepath = filepath
         self.mapper = mapper
+        self.filepath = filepath
+        self.imagepath = imagepath
 
     def preprocess_image(self, image_path, target_size):
         img = load_img(image_path, target_size=target_size)
         img_array = img_to_array(img)
+        
         img_array = preprocess_input(img_array)
         return img_array
 
-    def predict(self, X):
+    def predict(self):
+        X = pd.read_csv(self.filepath)[:10] #
+        
         text_preprocessor = TextPreprocessor()
-        image_preprocessor = ImagePreprocessor(self.filepath)
+        image_preprocessor = ImagePreprocessor(self.imagepath)
         text_preprocessor.preprocess_text_in_df(X, columns=["description"])
         image_preprocessor.preprocess_images_in_df(X)
 
@@ -62,29 +69,46 @@ class Predict:
         }
 
 
-with open("models/tokenizer_config.json", "r", encoding="utf-8") as json_file:
-    tokenizer_config = json_file.read()
-    tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(tokenizer_config)
-lstm = keras.models.load_model("models/best_lstm_model.h5")
-vgg16 = keras.models.load_model("models/best_vgg16_model.h5")
 
-with open("models/best_weights.json", "r") as json_file:
-    best_weights = json.load(json_file)
+def main():
+    parser = argparse.ArgumentParser(description= "Input data")
+    
+    parser.add_argument("--dataset_path", default = "data/preprocessed/X_train_update.csv", type=str,help="File path for the input CSV file.")
+    parser.add_argument("--images_path", default = "data/preprocessed/image_train", type=str,  help="Base path for the images.")
+    args = parser.parse_args()
 
-with open("models/mapper.json", "r") as json_file:
-    mapper = json.load(json_file)
+    # Charger les configurations et modèles
+    with open("models/tokenizer_config.json", "r", encoding="utf-8") as json_file:
+        tokenizer_config = json_file.read()
+    tokenizer = keras.preprocessing.text.tokenizer_from_json(tokenizer_config)
 
-# TO MODIFY WITH X_TEST
-X = pd.read_csv("data/preprocessed/X_train_update.csv")
-X = X.head()
+    lstm = keras.models.load_model("models/best_lstm_model.h5")
+    vgg16 = keras.models.load_model("models/best_vgg16_model.h5")
 
-predictor = Predict(
-    tokenizer=tokenizer,
-    lstm=lstm,
-    vgg16=vgg16,
-    best_weights=best_weights,
-    mapper=mapper,
-)
+    with open("models/best_weights.json", "r") as json_file:
+        best_weights = json.load(json_file)
 
-with open("data/preprocessed/predictions.json", "w", encoding="utf-8") as json_file:
-    json.dump(predictor.predict(X), json_file, indent=2)
+    with open("models/mapper.json", "r") as json_file:
+        mapper = json.load(json_file)
+        
+    
+    predictor = Predict(
+        tokenizer=tokenizer,
+        lstm=lstm,
+        vgg16=vgg16,
+        best_weights=best_weights,
+        mapper=mapper,
+        filepath= args.dataset_path,
+        imagepath = args.images_path,
+    )
+
+    # Création de l'instance Predict et exécution de la prédiction
+    predictions = predictor.predict()
+
+    # Sauvegarde des prédictions
+    with open("data/preprocessed/predictions.json", "w", encoding="utf-8") as json_file:
+        json.dump(predictions, json_file, indent=2)
+
+
+if __name__ == "__main__":
+    main()
