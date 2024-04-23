@@ -78,5 +78,7 @@ Once you have downloaded the github repo, open the anaconda powershell on the ro
                                         
                                          The predictions are saved in data/preprocessed as 'predictions.json'
 
+> You can download the trained models loaded here : https://drive.google.com/drive/folders/1fjWd-NKTE-RZxYOOElrkTdOw2fGftf5M?usp=drive_link and insert them in the models folder
+> 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 python make_dataset.py "../../data/raw" "../../data/preprocessed"
