@@ -25,12 +25,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Configure AWS Credentials 
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::875047674263:role/RakutenProjectRole
-          role-session-name: RakutenProjectRole
+          audience: sts.amazonaws.com
           aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::875047674263:role/RakutenProjectRole
 
       - name: Login to Amazon ECR
         id: login-ecr
