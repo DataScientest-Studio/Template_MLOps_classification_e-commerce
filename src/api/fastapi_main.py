@@ -7,5 +7,9 @@ app = FastAPI()
 def get_index():
     return {'data': 'hello world'}
 
+@app.get('/new_endpoint')
+def get_index():
+    return {'data': 'hello world'}
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)
