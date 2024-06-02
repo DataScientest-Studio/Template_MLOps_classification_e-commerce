@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - dev
-      - add-ci-workflow
 
 env:
   AWS_REGION: eu-central-1
