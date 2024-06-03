@@ -4,20 +4,18 @@ from pydantic import BaseModel
 from typing import List
 import duckdb
 import uvicorn
-
-# Initialize FastAPI app
-app = FastAPI()
-
-# Define OAuth2 password bearer
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-# Load DuckDB connection
-conn = duckdb.connect(database="your_duckdb_file.duckdb", read_only=False)
+import os
 
 # Model for listing
 class Listing(BaseModel):
     description: str
     user_id: str
+    designation: str
+    user_prdtypecode: int
+    imageid: int
+    
+# Define OAuth2 password bearer
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # OAuth2 password verification function
 def authenticate_user(username: str, password: str):
@@ -31,11 +29,14 @@ def authenticate_user(username: str, password: str):
     Returns:
         bool: True if the user is authenticated, False otherwise.
     """
-    cursor = conn.execute(f"SELECT * FROM dim_users WHERE username = '{username}' AND password = '{password}'")
+    cursor = conn.execute(f"SELECT * FROM dim_user WHERE username = '{username}' AND hashed_password = '{password}'")
     result = cursor.fetchone()
     if not result:
         return False
     return True
+
+# Initialize FastAPI app
+app = FastAPI()
 
 @app.get('/')
 def get_index():
@@ -86,11 +87,20 @@ async def read_listing(listing_id: int, current_user: dict = Depends(get_current
         dict: Dictionary containing listing description.
     """
     # Dummy logic to retrieve listing description based on listing_id
-    cursor = conn.execute(f"SELECT description FROM fact_listings WHERE listing_id = {listing_id}")
+    
+    cols = ["designation", "description", 
+            "user_prdtypecode", "model_prdtypecode", 
+            "waiting_datetime","validate_datetime",
+            "status","user","imageid"]
+    columns_str = ", ".join(cols)
+    cursor = conn.execute(f"SELECT {columns_str} FROM fact_listings WHERE listing_id = {listing_id}")
     result = cursor.fetchone()
     if not result:
         raise HTTPException(status_code=404, detail="Listing not found")
-    return {"listing_description": result[0]}
+    
+    response = dict(zip(cols,result))
+    
+    return response
 
 # Delete listing endpoint
 @app.delete("/delete_listing/{listing_id}")
@@ -135,4 +145,13 @@ async def add_listing(listing: Listing, current_user: dict = Depends(get_current
     return {"message": "Listing added successfully"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    
+    duckdb_path = "/home/jc/Workspace/mar24cmlops_rakuten/data/rakuten_db.duckdb"
+    
+    if os.path.isfile(duckdb_path):
+        # Load DuckDB connection
+        conn = duckdb.connect(database=duckdb_path, read_only=False)
+        uvicorn.run(app, host="0.0.0.0", port=8001)
+    else:
+        print('No Database Found')
+    
