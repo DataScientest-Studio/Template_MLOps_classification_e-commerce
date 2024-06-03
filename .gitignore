@@ -65,6 +65,7 @@ target/
 # Database
 *.db
 *.rdb
+*.csv
 
 # Pycharm
 .idea
