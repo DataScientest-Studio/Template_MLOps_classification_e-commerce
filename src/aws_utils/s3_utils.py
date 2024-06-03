@@ -2,6 +2,7 @@ import boto3
 import logging
 from botocore.exceptions import ClientError
 import os
+import json
 
 def aws_sts_login(ARN, SessionName):
     
@@ -35,19 +36,25 @@ def upload_file(s3_client, file_path, bucket, object_name=None):
 
     # If S3 object_name was not specified, use file_name
     
-    file_abspath = os.path.abspath(file_path)
-    
     if object_name is None:
         object_name = os.path.basename(file_path)
 
     # Upload the file
     
     try:
-        response = s3_client.upload_file(file_abspath, bucket, object_name)
+        response = s3_client.upload_file(file_path, bucket, object_name)
     except ClientError as e:
         logging.error(e)
         return False
     return True
 
-sts_session = aws_sts_login("arn:aws:iam::875047674263:role/RakutenProjectAppAccess","RakutenProjectAppAccess")
-s3_client = s3_login(sts_session)
+def load_aws_cfg(cfg_path):
+    cfg_file = open(os.path.abspath(".aws_config"),"r")
+    cfg = json.load(cfg_file)
+    return cfg
+
+# How to use:
+# aws_config = load_aws_cfg(cfg_path)
+# sts_session = aws_sts_login(**aws_config)
+# s3_client = s3_login(sts_session)
+# upload_file(s3_client, file_path, bucket, object_name=None)
