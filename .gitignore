@@ -94,6 +94,8 @@ target/
 
 # Log files
 /logs/
+/data/
+/models/
 
 # Artifacts
 # /models/
