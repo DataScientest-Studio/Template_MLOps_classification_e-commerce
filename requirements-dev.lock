@@ -35,6 +35,8 @@ dnspython==2.6.1
     # via email-validator
 docutils==0.16
     # via awscli
+duckdb==0.10.3
+    # via mar24cmlops-rakuten
 email-validator==2.1.1
     # via fastapi
 fastapi==0.111.0
