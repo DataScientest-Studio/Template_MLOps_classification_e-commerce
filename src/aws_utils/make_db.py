@@ -46,11 +46,12 @@ def create_table_from_pd_into_duckdb(duckdb_connection,pd_df, table_name):
     Loads a CSV file into a DuckDB database.
 
     Args:
+    - duckdb_connection (duckdb): The DuckDB connection.
     - pd_df (pd.DataFrame): The pd.DataFrame to be loaded.
     - table_name (str): The name of the table in DuckDB.
 
     Returns:
-    - duckdb_conn: The DuckDB connection.
+        None
     """
     duckdb_connection.execute(f"CREATE TABLE {table_name} AS SELECT * FROM pd_df")
 
@@ -61,6 +62,9 @@ def save_duckdb_to_parquet(duckdb_conn, db_file_path):
     Args:
     - duckdb_conn: The DuckDB connection.
     - db_file_path (str): The path where the database will be saved.
+    
+    Returns:
+        None
     """
     duckdb_conn.execute(f"EXPORT DATABASE '{db_file_path}' (FORMAT 'PARQUET')")
 
