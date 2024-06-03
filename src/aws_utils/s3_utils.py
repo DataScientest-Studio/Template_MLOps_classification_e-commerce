@@ -74,7 +74,7 @@ def load_aws_cfg(cfg_path):
     Returns:
         Dictionary containing AWS configurations
     """
-    cfg_file = open(os.path.abspath(".aws_config"),"r")
+    cfg_file = open(cfg_path,"r")
     cfg = json.load(cfg_file)
     return cfg
 
@@ -95,7 +95,6 @@ def download_file(s3_client, object_name, bucket, file_path = None):
         file_path = os.getcwd() + f'/{object_name}'
 
     # Download the file
-    
     try:
         response = s3_client.download_file(bucket,object_name,file_path)
     except ClientError as e:
