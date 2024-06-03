@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from typing import List
 import duckdb
+import uvicorn
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -132,11 +133,6 @@ async def add_listing(listing: Listing, current_user: dict = Depends(get_current
     listing_id = 1  # Dummy logic to generate listing_id
     conn.execute(f"INSERT INTO fact_listings VALUES ({listing_id}, '{listing.description}', '{listing.user_id}')")
     return {"message": "Listing added successfully"}
-
-# Run FastAPI app
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)
