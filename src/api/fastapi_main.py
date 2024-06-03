@@ -17,7 +17,7 @@ class Listing(BaseModel):
 # Define OAuth2 password bearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# OAuth2 password verification function
+# Password verification function
 def authenticate_user(username: str, password: str):
     """
     Authenticate a user with username and password.
@@ -139,9 +139,12 @@ async def add_listing(listing: Listing, current_user: dict = Depends(get_current
     Returns:
         dict: Message indicating success or failure.
     """
-    # Dummy logic to generate listing_id and insert new listing into database
-    listing_id = 1  # Dummy logic to generate listing_id
-    conn.execute(f"INSERT INTO fact_listings VALUES ({listing_id}, '{listing.description}', '{listing.user_id}')")
+    sql = """
+            INSERT INTO fact_listings (listing_id, description, user)
+            SELECT IFNULL(MAX(listing_id), 0) + 1, '{listing.description}', '{listing.user_id}'
+            FROM fact_listings;
+        """ 
+    conn.execute(sql)
     return {"message": "Listing added successfully"}
 
 if __name__ == "__main__":
