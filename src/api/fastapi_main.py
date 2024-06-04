@@ -10,7 +10,6 @@ from aws_utils.make_db import download_db_from_s3
 # Model for listing
 class Listing(BaseModel):
     description: str
-    username: str
     designation: str
     user_prdtypecode: int
     imageid: int
@@ -142,7 +141,7 @@ async def add_listing(listing: Listing, current_user: dict = Depends(get_current
     """
     sql = f"""
             INSERT INTO fact_listings (listing_id, description, user)
-            SELECT IFNULL(MAX(listing_id), 0) + 1, '{listing.description}', '{listing.username}'
+            SELECT IFNULL(MAX(listing_id), 0) + 1, '{listing.description}', '{current_user["username"]}'
             FROM fact_listings;
             SELECT MAX(listing_id) FROM fact_listings;
         """ 
