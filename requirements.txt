@@ -4,14 +4,28 @@ anyio==4.4.0
     # via httpx
     # via starlette
     # via watchfiles
+awscli==1.32.117
+    # via mar24cmlops-rakuten
+boto3==1.34.117
+    # via mar24cmlops-rakuten
+botocore==1.34.117
+    # via awscli
+    # via boto3
+    # via s3transfer
 certifi==2024.6.2
     # via httpcore
     # via httpx
 click==8.1.7
     # via typer
     # via uvicorn
+colorama==0.4.6
+    # via awscli
 dnspython==2.6.1
     # via email-validator
+docutils==0.16
+    # via awscli
+duckdb==0.10.3
+    # via mar24cmlops-rakuten
 email-validator==2.1.1
     # via fastapi
 fastapi==0.111.0
@@ -33,6 +47,9 @@ idna==3.7
     # via httpx
 jinja2==3.1.4
     # via fastapi
+jmespath==1.0.1
+    # via boto3
+    # via botocore
 markdown-it-py==3.0.0
     # via rich
 markupsafe==2.1.5
@@ -45,6 +62,8 @@ orjson==3.10.3
     # via fastapi
 pandas==2.2.2
     # via mar24cmlops-rakuten
+pyasn1==0.6.0
+    # via rsa
 pydantic==2.7.2
     # via fastapi
 pydantic-core==2.18.3
@@ -52,6 +71,7 @@ pydantic-core==2.18.3
 pygments==2.18.0
     # via rich
 python-dateutil==2.9.0.post0
+    # via botocore
     # via pandas
 python-dotenv==1.0.1
     # via uvicorn
@@ -60,9 +80,15 @@ python-multipart==0.0.9
 pytz==2024.1
     # via pandas
 pyyaml==6.0.1
+    # via awscli
     # via uvicorn
 rich==13.7.1
     # via typer
+rsa==4.7.2
+    # via awscli
+s3transfer==0.10.1
+    # via awscli
+    # via boto3
 shellingham==1.5.4
     # via typer
 six==1.16.0
@@ -83,6 +109,8 @@ tzdata==2024.1
     # via pandas
 ujson==5.10.0
     # via fastapi
+urllib3==2.2.1
+    # via botocore
 uvicorn==0.30.1
     # via fastapi
 uvloop==0.19.0

@@ -152,15 +152,17 @@ async def add_listing(listing: Listing, current_user: dict = Depends(get_current
 
 if __name__ == "__main__":
     
-    duckdb_path = "/home/jc/Workspace/mar24cmlops_rakuten/data/rakuten_db.duckdb"
-    s3_init_db_path = "/db/rakuten_init.duckdb"
+    duckdb_path = os.path.join(os.environ['DATA_PATH'], os.environ['RAKUTEN_DB_NAME'].lstrip('/'))
+    s3_init_db_path = os.environ['S3_INIT_DB_PATH']
+    aws_config_path = os.environ['AWS_CONFIG_PATH']
+    bucket_name = os.environ['S3_BUCKET']
     
     if not os.path.isfile(duckdb_path):
         print('No Database Found')
         # Since no database found for the API, download the initial database from S3
-        download_db_from_s3(aws_config_path = '/home/jc/Workspace/mar24cmlops_rakuten/.aws/.aws_config', 
-                            db_file_name = 'rakuten_init.duckdb', 
-                            bucket_name = 'rakutenprojectbucket', 
+        download_db_from_s3(aws_config_path = aws_config_path, 
+                            db_file_name = s3_init_db_path, 
+                            bucket_name = bucket_name, 
                             destination_path = duckdb_path)
         
         print('Database Sucessfully Downloaded')
