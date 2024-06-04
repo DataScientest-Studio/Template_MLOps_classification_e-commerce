@@ -1,6 +1,6 @@
 import duckdb
 import pandas as pd
-from s3_utils import aws_sts_login, load_aws_cfg, s3_login, download_file, upload_file
+from aws_utils.s3_utils import aws_sts_login, load_aws_cfg, s3_login, download_file, upload_file
 from datetime import datetime
 import numpy as np
 import os

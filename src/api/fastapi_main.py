@@ -5,6 +5,7 @@ from typing import List
 import duckdb
 import uvicorn
 import os
+from aws_utils.make_db import download_db_from_s3
 
 # Model for listing
 class Listing(BaseModel):
@@ -115,14 +116,14 @@ async def delete_listing(listing_id: int, current_user: dict = Depends(get_curre
     Returns:
         dict: Message indicating success or failure.
     """
-    # Dummy logic to check if user has permission to delete listing
-    cursor = conn.execute(f"SELECT user_id FROM fact_listings WHERE listing_id = {listing_id}")
+    # Logic to check if user has permission to delete listing
+    cursor = conn.execute(f"SELECT username FROM fact_listings WHERE listing_id = {listing_id}")
     result = cursor.fetchone()
     if not result:
         raise HTTPException(status_code=404, detail="Listing not found")
     if result[0] != current_user["username"]:
-        raise HTTPException(status_code=403, detail="User is not authorized to delete this listing")
-    # Dummy logic to delete listing
+        raise HTTPException(status_code=403, detail="This user is not the owner of this listing_id")
+    # Logic to delete listing
     conn.execute(f"DELETE FROM fact_listings WHERE listing_id = {listing_id}")
     return {"message": "Listing deleted successfully"}
 
@@ -150,11 +151,18 @@ async def add_listing(listing: Listing, current_user: dict = Depends(get_current
 if __name__ == "__main__":
     
     duckdb_path = "/home/jc/Workspace/mar24cmlops_rakuten/data/rakuten_db.duckdb"
+    s3_init_db_path = "/db/rakuten_init.duckdb"
     
-    if os.path.isfile(duckdb_path):
-        # Load DuckDB connection
-        conn = duckdb.connect(database=duckdb_path, read_only=False)
-        uvicorn.run(app, host="0.0.0.0", port=8001)
-    else:
+    if not os.path.isfile(duckdb_path):
         print('No Database Found')
-    
+        # Since no database found for the API, download the initial database from S3
+        download_db_from_s3(aws_config_path = '/home/jc/Workspace/mar24cmlops_rakuten/.aws/.aws_config', 
+                            db_file_name = 'rakuten_init.duckdb', 
+                            bucket_name = 'rakutenprojectbucket', 
+                            destination_path = duckdb_path)
+        
+        print('Database Sucessfully Downloaded')
+        
+    # Load DuckDB connection   
+    conn = duckdb.connect(database=duckdb_path, read_only=False)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
