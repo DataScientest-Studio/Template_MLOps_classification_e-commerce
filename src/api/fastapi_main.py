@@ -117,7 +117,7 @@ async def delete_listing(listing_id: int, current_user: dict = Depends(get_curre
         dict: Message indicating success or failure.
     """
     # Logic to check if user has permission to delete listing
-    cursor = conn.execute(f"SELECT username FROM fact_listings WHERE listing_id = {listing_id}")
+    cursor = conn.execute(f"SELECT user FROM fact_listings WHERE listing_id = {listing_id}")
     result = cursor.fetchone()
     if not result:
         raise HTTPException(status_code=404, detail="Listing not found")
