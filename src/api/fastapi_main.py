@@ -10,7 +10,7 @@ from aws_utils.make_db import download_db_from_s3
 # Model for listing
 class Listing(BaseModel):
     description: str
-    user_id: str
+    username: str
     designation: str
     user_prdtypecode: int
     imageid: int
@@ -140,13 +140,16 @@ async def add_listing(listing: Listing, current_user: dict = Depends(get_current
     Returns:
         dict: Message indicating success or failure.
     """
-    sql = """
+    sql = f"""
             INSERT INTO fact_listings (listing_id, description, user)
-            SELECT IFNULL(MAX(listing_id), 0) + 1, '{listing.description}', '{listing.user_id}'
+            SELECT IFNULL(MAX(listing_id), 0) + 1, '{listing.description}', '{listing.username}'
             FROM fact_listings;
+            SELECT MAX(listing_id) FROM fact_listings;
         """ 
-    conn.execute(sql)
-    return {"message": "Listing added successfully"}
+    
+    listing_id_added = conn.execute(sql).fetchall()[0][0]
+
+    return {"message": f"Listing {listing_id_added} added successfully"}
 
 if __name__ == "__main__":
     
