@@ -93,6 +93,6 @@ target/
 .mypy_cache/
 
 # Log files
-/logs/
+
 # Artifacts
 # /models/
