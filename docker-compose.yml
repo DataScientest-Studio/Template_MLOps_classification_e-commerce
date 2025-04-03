@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  model-api:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODEL_PATH=/app/models
+      - DATA_PATH=/app/data
+    restart: unless-stopped
+    networks:
+      - ml-network
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./mlflow:/mlflow
+    environment:
+      - MLFLOW_TRACKING_URI=sqlite:///mlflow/mlflow.db
+    command: mlflow server --backend-store-uri sqlite:///mlflow/mlflow.db --default-artifact-root /mlflow/artifacts --host 0.0.0.0
+    networks:
+      - ml-network
+
+    prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - ml-network
+    restart: unless-stopped
+
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - ml-network
+    restart: unless-stopped
+
+volumes:
+  grafana-storage:
+
+networks:
+  ml-network:
+    driver: bridge

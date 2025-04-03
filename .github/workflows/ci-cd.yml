@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - oct24_bmle_mlops_rakuten_bastien
+  pull_request:
+    branches:
+      - oct24_bmle_mlops_rakuten_bastien
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Supprimer pywin32 et remplacer tensorflow-intel par tensorflow sous Linux
+          sed -i '/pywin32/d' requirements.txt || true
+          sed -i 's/tensorflow-intel/tensorflow/' requirements.txt || true
+          pip install -r requirements.txt
+
+      - name: Install linting tools
+        run: |
+          pip install flake8 black
+
+      - name: Auto-format code with Black
+        run: black src/
+
+      - name: Run linting
+        run: |
+          flake8 src/ --ignore=E203,E231,E251,E261,E302,E303,E501,E712,F401,F811,F821,W292,W293,W391,W503 --count --show-source --statistics
+
+      - name: Run tests
+        run: |
+          pip install pytest
+          pytest tests/
+
+      - name: Run data preparation
+        run: python src/data/make_dataset.py data/raw data/preprocessed
+
+      - name: Train model
+        run: python src/main.py
+
+      - name: Run predictions
+        run: python src/predict.py
+
+

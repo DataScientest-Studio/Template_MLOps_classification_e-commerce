@@ -1,0 +1,27 @@
+Lance Grafana avec Docker :
+docker run -d --name=grafana -p 3000:3000 grafana/grafana
+
+Accède à Grafana :
+http://localhost:3000
+
+Identifiants par défaut :
+Username : admin
+Password : admin
+
+Ajoute Prometheus comme source de données :
+Settings → Data Sources → Add Data Source
+Sélectionne Prometheus.
+Dans URL, mets : http://localhost:9090
+Clique sur Save & Test.
+
+Créer un Dashboard Grafana
+New Dashboard → Add a New Panel.
+
+Dans Query, utilise des métriques comme :
+
+http_server_requests_total (nombre de requêtes)
+
+http_request_duration_seconds_bucket (temps de réponse)
+
+Ajoute des visualisations comme un Graph Panel ou Gauge Panel.
+

@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 5s  # Fréquence de collecte des métriques
+
+scrape_configs:
+  - job_name: "fastapi"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["fastapi:8000"]  # Remplace par l'IP/URL de ton API
+
+#puis lancer prometheus avec docker : 
+docker run -d --name=prometheus \
+  -p 9090:9090 \
+  -v $(pwd)/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml \
+  prom/prometheus
+
+  #Accède à Prometheus à l'adresse : http://localhost:9090
+Vérifie que le job "fastapi" est bien ajouté dans Status → Targets.
+
+
