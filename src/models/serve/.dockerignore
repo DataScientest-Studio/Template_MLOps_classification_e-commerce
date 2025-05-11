@@ -1,0 +1,6 @@
+# ignore the training data, here we already have a trained and saved model
+data/raw
+# Ignore the sources data and train directories not needed here
+src/data
+src/models/predict
+src/models/train

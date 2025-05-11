@@ -1,0 +1,8 @@
+requests==2.31.0
+pathlib
+click
+dotenv
+shutil
+logging
+os
+python-dotenv

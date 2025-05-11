@@ -1,0 +1,3 @@
+# Ignore the sources data and serve directories not needed here
+src/data
+src/models/serve

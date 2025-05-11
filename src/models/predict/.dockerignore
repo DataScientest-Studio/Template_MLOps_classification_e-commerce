@@ -1,0 +1,8 @@
+# ignore the images test data
+data/raw/image_test
+# Ignore the test data as predict is using the train data
+data/raw/X_test_update.csv
+# Ignore the sources data, serve and train directories not needed here
+src/data
+src/models/serve
+src/models/train

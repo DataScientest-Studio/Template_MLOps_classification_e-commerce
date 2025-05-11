@@ -17,7 +17,15 @@ from sklearn.metrics import accuracy_score
 from tensorflow import keras
 import pickle
 import json
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+    
+# Load paths from environment variables
+tokenizer_config_path = os.environ.get("TOKENIZER_CONFIG_PATH", "../../../models/tokenizer_config.json")
+lstm_model_path = os.environ.get("LSTM_MODEL_PATH", "../../../models/best_lstm_model.h5")
+vgg16_model_path = os.environ.get("VGG16_MODEL_PATH", "../../../models/best_vgg16_model.h5")
 
 class TextLSTMModel:
     def __init__(self, max_words=10000, max_sequence_length=10):
@@ -30,7 +38,7 @@ class TextLSTMModel:
         self.tokenizer.fit_on_texts(X_train["description"])
 
         tokenizer_config = self.tokenizer.to_json()
-        with open("models/tokenizer_config.json", "w", encoding="utf-8") as json_file:
+        with open(tokenizer_config_path, "w", encoding="utf-8") as json_file:
             json_file.write(tokenizer_config)
 
         train_sequences = self.tokenizer.texts_to_sequences(X_train["description"])
@@ -64,7 +72,7 @@ class TextLSTMModel:
 
         lstm_callbacks = [
             ModelCheckpoint(
-                filepath="models/best_lstm_model.h5", save_best_only=True
+                filepath=lstm_model_path, save_best_only=True
             ),  # Enregistre le meilleur modèle
             EarlyStopping(
                 patience=3, restore_best_weights=True
@@ -145,7 +153,7 @@ class ImageVGG16Model:
 
         vgg_callbacks = [
             ModelCheckpoint(
-                filepath="models/best_vgg16_model.h5", save_best_only=True
+                filepath=vgg16_model_path, save_best_only=True
             ),  # Enregistre le meilleur modèle
             EarlyStopping(
                 patience=3, restore_best_weights=True
