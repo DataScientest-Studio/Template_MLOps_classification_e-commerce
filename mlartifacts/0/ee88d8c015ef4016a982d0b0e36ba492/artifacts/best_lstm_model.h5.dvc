@@ -1,0 +1,5 @@
+outs:
+- md5: f2ef440d6ef293a318ea39948908a68e
+  size: 17020872
+  hash: md5
+  path: best_lstm_model.h5

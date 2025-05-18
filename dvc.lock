@@ -1,0 +1,19 @@
+schema: '2.0'
+stages:
+  train:
+    cmd: python src/models/train/train_model.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 195d5bc620891bd8cc4083ba94623197.dir
+      size: 71146364
+      nfiles: 254
+    - path: src/models/train/train_model.py
+      hash: md5
+      md5: 5fa8031b84a7089bbbde4d3b6287c27d
+      size: 9787
+    outs:
+    - path: models/best_lstm_model.h5
+      hash: md5
+      md5: f2ef440d6ef293a318ea39948908a68e
+      size: 17020872

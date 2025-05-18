@@ -1,98 +1,98 @@
-#deep learning models
-*.h5
+# =======================
+# DVC
+# =======================
+!*.dvc
+!.dvc/
+!dvc.yaml
+!dvc.lock
 
-# Byte-compiled / optimized / DLL files
+# =======================
+# Données versionnées avec DVC
+# =======================
+data/raw/*
+!data/raw/*.dvc
+data/preprocessed/*
+!data/preprocessed/*.dvc
+
+# =======================
+# Modèles
+# =======================
+models/*
+!models/*.h5
+!models/*.dvc
+
+# =======================
+# Environnements et dépendances
+# =======================
+.env
+.env.*
+env/
+.venv/
+.Python
+
+# =======================
+# Caches, compilés, logs
+# =======================
 __pycache__/
 *.py[cod]
+.mypy_cache/
+.cache
+*.log
+logs/
 
-# C extensions
-*.so
+# =======================
+# Fichiers systèmes
+# =======================
+.DS_Store
 
-# Distribution / packaging
-.Python
-env/
+# =======================
+# IDEs
+# =======================
+.vscode/
+.idea/
+.spyproject/
+
+# =======================
+# Jupyter Notebooks
+# =======================
+.ipynb_checkpoints/
+
+# =======================
+# Build et packaging
+# =======================
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
+*.egg-info/
 .eggs/
+*.egg
+develop-eggs/
+downloads/
 lib/
 lib64/
 parts/
 sdist/
 var/
-*.egg-info/
 .installed.cfg
-*.egg
 
+# =======================
 # PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+# =======================
 *.manifest
 *.spec
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
+# =======================
+# Couverture et tests
+# =======================
 htmlcov/
 .tox/
 .coverage
 .coverage.*
-.cache
 nosetests.xml
 coverage.xml
 *.cover
 
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# DotEnv configuration
-.env
-
-# Database
-*.db
-*.rdb
-
-# Pycharm
-.idea
-
-# VS Code
-.vscode/
-
-# Spyder
-.spyproject/
-
-# Jupyter NB Checkpoints
-.ipynb_checkpoints/
-
-# exclude data from source control by default
-/data/
-
-# Mac OS-specific storage files
-.DS_Store
-
-# vim
+# =======================
+# Vim swap
+# =======================
 *.swp
 *.swo
-
-# Mypy cache
-.mypy_cache/
-
-# Log files
-/logs/
-
-# Artifacts
-# /models/

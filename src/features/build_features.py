@@ -8,9 +8,17 @@ from nltk.stem import WordNetLemmatizer
 import pickle
 import math
 
+import os
+from dotenv import load_dotenv
+
+  # Load environment variables from .env file
+load_dotenv()
+
+# Load paths from environment variables
+mapper_path_pkl = os.environ.get("MAPPER_PATH_PKL", "../../../models/mapper.pkl")
 
 class DataImporter:
-    def __init__(self, filepath="data/preprocessed"):
+    def __init__(self, filepath="data/raw"):
         self.filepath = filepath
 
     def load_data(self):
@@ -25,7 +33,7 @@ class DataImporter:
         }
         target["prdtypecode"] = target["prdtypecode"].replace(modalite_mapping)
 
-        with open("models/mapper.pkl", "wb") as fichier:
+        with open(mapper_path_pkl, "wb") as fichier:
             pickle.dump(modalite_mapping, fichier)
 
         df = pd.concat([data, target], axis=1)
@@ -80,7 +88,7 @@ class DataImporter:
 
 
 class ImagePreprocessor:
-    def __init__(self, filepath="data/preprocessed/image_train"):
+    def __init__(self, filepath="data/raw/image_train"):
         self.filepath = filepath
 
     def preprocess_images_in_df(self, df):

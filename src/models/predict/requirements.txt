@@ -1,0 +1,11 @@
+argparse
+pandas==2.0.3
+tensorboard==2.13.0
+tensorboard-data-server==0.7.1
+tensorflow==2.13.0
+tensorflow-estimator==2.13.0
+numpy==1.24.3
+python-dotenv
+bs4
+nltk
+Pillow

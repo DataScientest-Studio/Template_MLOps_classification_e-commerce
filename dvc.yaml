@@ -1,0 +1,7 @@
+stages:
+  train:
+    cmd: python src/models/train/train_model.py
+    deps:
+      - src/models/train/train_model.py
+      - data/raw
+ 

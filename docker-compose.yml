@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Service pour l'importation initiale des données
+  import-data:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ml-project:latest
+    container_name: ml-project-import-data
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python src/data/build_data/import_raw_data.py
+
+  # Service pour prétraiter les données (copier de /data/raw vers /data/preprocessed)
+  files-preprocess:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ml-project:latest
+    container_name: ml-project-preprocess
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    #command: python src/data/make_dataset.py
+    command: python src/data/build_data/make_dataset.py /app/data/raw /app/data/preprocessed
+    depends_on:
+      - import-data
+
+  # Service pour l'entraînement après prétraitement
+  train:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ml-project:latest
+    container_name: ml-project-train
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python src/models/train/main.py
+    depends_on:
+      - files-preprocess

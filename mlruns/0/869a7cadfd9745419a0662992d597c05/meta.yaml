@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/869a7cadfd9745419a0662992d597c05/artifacts
+end_time: 1746439557086
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 869a7cadfd9745419a0662992d597c05
+run_name: Log_Existing_LSTM_Model
+run_uuid: 869a7cadfd9745419a0662992d597c05
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746439543929
+status: 3
+tags: []
+user_id: MariamaNadia

@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/698957007655562593/8d7854dbe0b3465c84beb8a9e204c033/artifacts
+end_time: 1746400655579
+entry_point_name: ''
+experiment_id: '698957007655562593'
+lifecycle_stage: active
+run_id: 8d7854dbe0b3465c84beb8a9e204c033
+run_name: righteous-skink-817
+run_uuid: 8d7854dbe0b3465c84beb8a9e204c033
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746400641569
+status: 3
+tags: []
+user_id: ubuntu

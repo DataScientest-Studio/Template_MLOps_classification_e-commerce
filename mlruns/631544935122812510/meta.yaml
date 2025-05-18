@@ -1,0 +1,6 @@
+artifact_location: file:///home/ubuntu/projet_mlops/Projet_Formation_MLOps_DataScientest_2025/mlruns/631544935122812510
+creation_time: 1746448645376
+experiment_id: '631544935122812510'
+last_update_time: 1746448645376
+lifecycle_stage: active
+name: Log_Existing_LSTM_Model

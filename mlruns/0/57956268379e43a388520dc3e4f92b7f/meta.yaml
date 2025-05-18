@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/57956268379e43a388520dc3e4f92b7f/artifacts
+end_time: 1746367705286
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 57956268379e43a388520dc3e4f92b7f
+run_name: LSTM_Model_Run
+run_uuid: 57956268379e43a388520dc3e4f92b7f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1746367694476
+status: 4
+tags: []
+user_id: ubuntu
