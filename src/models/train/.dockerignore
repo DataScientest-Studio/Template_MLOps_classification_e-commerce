@@ -1,0 +1,20 @@
+# Ignore the sources data and serve directories not needed here
+src/data
+src/models/serve
+
+# Version control directory
+.git
+
+# Logs files
+*.log
+
+# Environment files
+.env
+.env.local
+
+# Python cache files and compiled bytecode
+__pycache__/
+*.pyc
+
+# Docker Compose file
+docker-compose.yml

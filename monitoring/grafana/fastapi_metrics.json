@@ -1,0 +1,30 @@
+{
+  "id": null,
+  "uid": null,
+  "title": "FastAPI Monitoring",
+  "timezone": "browser",
+  "schemaVersion": 26,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Total HTTP Requests",
+      "targets": [
+        {
+          "expr": "http_requests_total{job=\"fastapi_app\"}",
+          "interval": "",
+          "legendFormat": "method {{method}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      }
+    }
+  ]
+}
+

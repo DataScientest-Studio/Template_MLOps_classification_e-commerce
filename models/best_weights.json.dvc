@@ -1,0 +1,5 @@
+outs:
+- md5: 585867a9dc2d17a24ba8a7e4cce07622
+  size: 12
+  hash: md5
+  path: best_weights.json

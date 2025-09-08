@@ -1,0 +1,5 @@
+outs:
+- md5: 21a73c1f729cb2eed281745f528fd6ef
+  size: 416
+  hash: md5
+  path: mapper.json

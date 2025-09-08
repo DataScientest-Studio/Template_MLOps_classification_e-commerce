@@ -8,10 +8,10 @@ from nltk.stem import WordNetLemmatizer
 import pickle
 import math
 
-
 class DataImporter:
-    def __init__(self, filepath="data/preprocessed"):
+    def __init__(self, filepath="data/raw", mapper_path=""):
         self.filepath = filepath
+        self.mapper_path = mapper_path
 
     def load_data(self):
         data = pd.read_csv(f"{self.filepath}/X_train_update.csv")
@@ -25,7 +25,7 @@ class DataImporter:
         }
         target["prdtypecode"] = target["prdtypecode"].replace(modalite_mapping)
 
-        with open("models/mapper.pkl", "wb") as fichier:
+        with open(self.mapper_path, "wb") as fichier:
             pickle.dump(modalite_mapping, fichier)
 
         df = pd.concat([data, target], axis=1)
@@ -80,7 +80,7 @@ class DataImporter:
 
 
 class ImagePreprocessor:
-    def __init__(self, filepath="data/preprocessed/image_train"):
+    def __init__(self, filepath="data/raw/image_train"):
         self.filepath = filepath
 
     def preprocess_images_in_df(self, df):

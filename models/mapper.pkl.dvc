@@ -1,0 +1,5 @@
+outs:
+- md5: bdc01efbae713fb4c49d7b1dd0d6a2a9
+  size: 668
+  hash: md5
+  path: mapper.pkl

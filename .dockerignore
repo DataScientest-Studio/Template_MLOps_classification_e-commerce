@@ -1,0 +1,12 @@
+# Version control directory
+.git
+
+# Logs files
+*.log
+
+# Python cache files and compiled bytecode
+__pycache__/
+*.pyc
+
+# Docker Compose file
+docker-compose.yml

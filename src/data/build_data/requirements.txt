@@ -1,0 +1,11 @@
+# HTTP Requests
+requests==2.31.0
+
+# CLI Framework
+click==8.1.7
+
+# Configuration Management
+python-dotenv==1.0.0
+
+# MLOps and Experiment Tracking
+dagshub==0.3.1
